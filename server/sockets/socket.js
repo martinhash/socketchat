@@ -1,42 +1,16 @@
-const { io } = require('../server');
+const { io } = require("../server");
+const { Users } = require("../models/users.model");
 
-
-io.on('connection', (client) => {
-
-    console.log('Usuario conectado');
-
-    client.emit('enviarMensaje', {
-        usuario: 'Administrador',
-        mensaje: 'Bienvenido a esta aplicación'
-    });
-
-
-
-    client.on('disconnect', () => {
-        console.log('Usuario desconectado');
-    });
-
-    // Escuchar el cliente
-    client.on('enviarMensaje', (data, callback) => {
-
-        console.log(data);
-
-        client.broadcast.emit('enviarMensaje', data);
-
-
-        // if (mensaje.usuario) {
-        //     callback({
-        //         resp: 'TODO SALIO BIEN!'
-        //     });
-
-        // } else {
-        //     callback({
-        //         resp: 'TODO SALIO MAL!!!!!!!!'
-        //     });
-        // }
-
-
-
-    });
-
+users = new Users();
+io.on("connection", (client) => {
+  client.on("", (user, callback) => {
+    if (!user.name) {
+      return callback({
+        error: true,
+        message: "The name es Neccesary",
+      });
+    }
+    let persons = users.addPerson(client.id, user.name);
+    callback(persons);
+  });
 });
